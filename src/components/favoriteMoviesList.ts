@@ -3,7 +3,7 @@ import { createFavoriteMovieCard } from './favoriteFilmCard';
 import { LocalStorageKeys } from '../enums/localStorageKeys';
 import { getMovieById } from '../helpers/apiHelper';
 
-function favoriteMoviesList() {
+function favoriteMoviesList(): void {
     const favoriteFilmsContainer = document.getElementById(
         'favorite-movies'
     ) as HTMLElement;

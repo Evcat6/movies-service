@@ -12,7 +12,12 @@ import { CardColors } from '../enums/cardColors';
 import { LocalStorageKeys } from '../enums/localStorageKeys';
 import { APILinks } from '../enums/apiLinks';
 
-const createFilmCard = ({ poster_path, overview, release_date, id }: Movie) => {
+const createFilmCard = ({
+    poster_path,
+    overview,
+    release_date,
+    id,
+}: Movie): HTMLElement => {
     const cardContainer: HTMLElement = createElement({
         tagName: 'div',
         className: 'col-lg-3 col-md-4 col-12 p-2',
@@ -45,7 +50,8 @@ const createFilmCard = ({ poster_path, overview, release_date, id }: Movie) => {
         svgHurt.setAttribute('fill', CardColors.lightRed);
     }
 
-    svgHurt.addEventListener('click', () => svgHurtListener(id, svgHurt));
+    const svgHurtPath = svgHurt.children[0];
+    svgHurtPath.addEventListener('click', (e) => svgHurtListener(e, id));
 
     cardShadow.appendChild(elementImage);
     cardShadow.appendChild(svgHurt);
@@ -57,13 +63,12 @@ const createFilmCard = ({ poster_path, overview, release_date, id }: Movie) => {
     return cardContainer;
 };
 
-const svgHurtListener = async (
-    id: number,
-    svgHurt: SVGSVGElement
-): Promise<void> => {
+const svgHurtListener = async (e: Event, id: number): Promise<void> => {
     const movie = await getMovieById(id);
-
     if (!movie) return;
+
+    const pathElement = e.target as HTMLElement;
+    const svgElement = pathElement.closest('svg') as SVGSVGElement;
 
     const favoriteFilmsContainer = document.getElementById(
         'favorite-movies'
@@ -77,7 +82,7 @@ const svgHurtListener = async (
             ...moviesFromStorage,
             id,
         ]);
-        svgHurt.setAttribute('fill', CardColors.lightRed);
+        svgElement.setAttribute('fill', CardColors.lightRed);
 
         const newFavoriteMovie = createFavoriteMovieCard(movie);
         favoriteFilmsContainer.appendChild(newFavoriteMovie);
@@ -87,7 +92,7 @@ const svgHurtListener = async (
             LocalStorageKeys.FavoriteMovies,
             moviesFromStorage
         );
-        svgHurt.setAttribute('fill', CardColors.darkRed);
+        svgElement.setAttribute('fill', CardColors.darkRed);
         removeElementByDataKey(id);
     }
 };

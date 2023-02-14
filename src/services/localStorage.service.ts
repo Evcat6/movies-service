@@ -2,7 +2,7 @@ const getItemFromLocalStorage = (key: string) => {
     return JSON.parse(localStorage.getItem(key) || '[]');
 };
 
-function setItemToLocalStorage<Type>(key: string, value: Type): void {
+function setItemToLocalStorage<T>(key: string, value: T): void {
     localStorage.setItem(key, JSON.stringify(value));
 }
 

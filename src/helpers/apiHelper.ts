@@ -1,7 +1,12 @@
 import { APIEndoints } from '../enums/apiEndpoints';
-import { MovieApiResponse, Movie } from '../interfaces/response.interface';
+import {
+    MovieApiResponse,
+    Movie,
+    unmappedMovie,
+} from '../interfaces/response.interface';
 import { APILinks } from '../enums/apiLinks';
 import { APIMethods } from '../enums/apiMethods';
+import { movieMapper, moviesMapper } from '../utils/moviesMapper';
 
 const API_KEY = '6a6891ea94e015aee4047d70ea4f4006';
 
@@ -43,6 +48,8 @@ const getPopularMovies = async (page = 1): Promise<MovieApiResponse> => {
         page,
     };
     const popularMovies: MovieApiResponse = await apiRequest(endpoint, queries);
+    const unmappedPopularMovies = popularMovies.results as unmappedMovie[];
+    moviesMapper(unmappedPopularMovies);
     return popularMovies;
 };
 
@@ -55,6 +62,8 @@ const getTopRatedMovies = async (page = 1): Promise<MovieApiResponse> => {
         endpoint,
         queries
     );
+    const unmappedTopRatedMovies = topRatedMovies.results as unmappedMovie[];
+    moviesMapper(unmappedTopRatedMovies);
     return topRatedMovies;
 };
 
@@ -67,12 +76,15 @@ const getUpcomingMovies = async (page = 1): Promise<MovieApiResponse> => {
         endpoint,
         queries
     );
+    const unmappedMovies = topUpcomingMovies.results as unmappedMovie[];
+    moviesMapper(unmappedMovies);
     return topUpcomingMovies;
 };
 
 const getMovieById = async (id: number): Promise<Movie> => {
     const endpoint = `${APIEndoints.Movie}/${id}`;
-    const movieById: Movie = await apiRequest(endpoint);
+    const movieById: unmappedMovie = await apiRequest(endpoint);
+    movieMapper(movieById);
     return movieById;
 };
 
@@ -85,8 +97,10 @@ const getMoviesByQuery = async (
         page,
         query,
     };
-    const movieByQuery: MovieApiResponse = await apiRequest(endpoint, queries);
-    return movieByQuery;
+    const moviesByQuery: MovieApiResponse = await apiRequest(endpoint, queries);
+    const unmappedMovies = moviesByQuery.results as unmappedMovie[];
+    moviesMapper(unmappedMovies);
+    return moviesByQuery;
 };
 
 const getMoviesByEnpoint = async (
@@ -96,11 +110,12 @@ const getMoviesByEnpoint = async (
     const queries = {
         page,
     };
-    const movieByEnpoint: MovieApiResponse = await apiRequest(
+    const moviesByEnpoint: MovieApiResponse = await apiRequest(
         endpoint,
         queries
     );
-    return movieByEnpoint;
+    moviesMapper(moviesByEnpoint.results as unmappedMovie[]);
+    return moviesByEnpoint;
 };
 
 export {

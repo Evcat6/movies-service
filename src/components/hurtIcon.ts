@@ -1,4 +1,4 @@
-function createSvgHurt(color: string) {
+function createSvgHurt(color: string): SVGSVGElement {
     const svgContainer: SVGSVGElement = document.createElementNS(
         'http://www.w3.org/2000/svg',
         'svg'

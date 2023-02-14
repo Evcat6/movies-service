@@ -44,7 +44,8 @@ function createFavoriteMovieCard({
 
     const svgHurt: SVGSVGElement = createSvgHurt(CardColors.darkRed);
 
-    svgHurt.addEventListener('click', () => svgFavoriteHurtListener(id));
+    const svgHurtPath = svgHurt.children[0];
+    svgHurtPath.addEventListener('click', () => svgFavoriteHurtListener(id));
 
     if (moviesFromStorage.includes(id)) {
         svgHurt.setAttribute('fill', CardColors.lightRed);
@@ -64,13 +65,15 @@ function svgFavoriteHurtListener(id: number): void {
     const cardFromMainList = document.querySelector(
         `[data-gen-key="${id}"]`
     ) as Element;
-    const cardFromMainListFirstChild = cardFromMainList.children[0];
-    for (let i = 0; i < cardFromMainListFirstChild.childElementCount; i++) {
-        if (cardFromMainListFirstChild.children[i].tagName === 'IMG') {
-            cardFromMainListFirstChild.children[i].setAttribute(
-                'fill',
-                CardColors.darkRed
-            );
+    if (cardFromMainList) {
+        const cardFromMainListFirstChild = cardFromMainList.children[0];
+        for (let i = 0; i < cardFromMainListFirstChild.childElementCount; i++) {
+            if (cardFromMainListFirstChild.children[i].tagName === 'svg') {
+                cardFromMainListFirstChild.children[i].setAttribute(
+                    'fill',
+                    CardColors.darkRed
+                );
+            }
         }
     }
 

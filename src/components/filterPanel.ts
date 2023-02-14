@@ -14,9 +14,17 @@ import { createFilmCard } from './filmCard';
 function filterPanel(): void {
     const searchInput = document.getElementById('search') as HTMLInputElement;
     const searchButton = document.getElementById('submit') as HTMLButtonElement;
-    const enterButtonKeyCode = 13;
 
-    const buttons = document.getElementsByClassName('btn-outline-dark');
+    const popularButton = document.querySelector(
+        '[for="popular"]'
+    ) as HTMLLabelElement;
+    const upcomingButton = document.querySelector(
+        '[for="upcoming"]'
+    ) as HTMLLabelElement;
+    const topRatedButton = document.querySelector(
+        '[for="top_rated"]'
+    ) as HTMLLabelElement;
+
     const loadMoreButton = document.getElementById(
         'load-more'
     ) as HTMLButtonElement;
@@ -33,16 +41,16 @@ function filterPanel(): void {
     searchButton.addEventListener('click', searchEventListener);
     document.addEventListener('keyup', keyUp);
 
-    buttons[0].addEventListener('click', firstButtonEventListener);
-    buttons[1].addEventListener('click', secondButtonEventListener);
-    buttons[2].addEventListener('click', thirdButtonEventListener);
+    popularButton.addEventListener('click', firstButtonEventListener);
+    upcomingButton.addEventListener('click', secondButtonEventListener);
+    topRatedButton.addEventListener('click', thirdButtonEventListener);
 
     loadMoreButton.addEventListener('click', loadMoreEventListener);
 
     function keyUp(e: KeyboardEvent): void {
         if (
             (document.activeElement as Element).id === 'search' &&
-            e.keyCode === enterButtonKeyCode
+            e.key === 'Enter'
         ) {
             searchEventListener();
         }
@@ -58,7 +66,7 @@ function filterPanel(): void {
         );
         currentParams.currentPage = response.page;
         removeAllChildrens(filmsContainer);
-        iterateMovies(response.results);
+        iterateMainPageMovies(response.results);
     }
 
     async function firstButtonEventListener(): Promise<void> {
@@ -68,7 +76,7 @@ function filterPanel(): void {
         const response = await getPopularMovies(currentParams.currentPage);
         currentParams.currentPage = response.page;
         removeAllChildrens(filmsContainer);
-        iterateMovies(response.results);
+        iterateMainPageMovies(response.results);
     }
 
     async function secondButtonEventListener(): Promise<void> {
@@ -78,7 +86,7 @@ function filterPanel(): void {
         const response = await getUpcomingMovies(currentParams.currentPage);
         currentParams.currentPage = response.page;
         removeAllChildrens(filmsContainer);
-        iterateMovies(response.results);
+        iterateMainPageMovies(response.results);
     }
 
     async function thirdButtonEventListener(): Promise<void> {
@@ -88,7 +96,7 @@ function filterPanel(): void {
         const response = await getTopRatedMovies(currentParams.currentPage);
         currentParams.currentPage = response.page;
         removeAllChildrens(filmsContainer);
-        iterateMovies(response.results);
+        iterateMainPageMovies(response.results);
     }
 
     async function loadMoreEventListener(): Promise<void> {
@@ -99,26 +107,26 @@ function filterPanel(): void {
                 currentParams.currentPage + 1
             );
             currentParams.currentPage = response.page;
-            iterateMovies(response.results);
+            iterateMainPageMovies(response.results);
         }
         const response = await getMoviesByEnpoint(
             currentParams.currentPath,
             currentParams.currentPage + 1
         );
         currentParams.currentPage = response.page;
-        iterateMovies(response.results);
+        iterateMainPageMovies(response.results);
     }
 }
 
-function iterateMovies(movies: Movie[]) {
+function iterateMainPageMovies(movies: Movie[]): void {
     const filmsContainer = document.getElementById(
         'film-container'
     ) as HTMLElement;
 
-    for (const item of movies) {
-        const newMovie = createFilmCard(item);
+    movies.map((movie: Movie) => {
+        const newMovie = createFilmCard(movie);
         filmsContainer.appendChild(newMovie);
-    }
+    })
 }
 
 export { filterPanel };

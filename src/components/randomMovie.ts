@@ -16,7 +16,7 @@ async function randomMovie(): Promise<void> {
     const movies = await getPopularMovies();
 
     const minRange = 0;
-    const maxRange = 20;
+    const maxRange = movies.results.length;
     const randomMovieId = generateRandomNumber(minRange, maxRange);
     const movieById: Movie = movies.results[randomMovieId];
     randomMovieContainer.style.backgroundImage = `url(${APILinks.API_IMAGES_URL}/${movieById.backdrop_path})`;

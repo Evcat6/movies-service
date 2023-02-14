@@ -1,10 +1,10 @@
 interface MovieApiResponse {
     page: number;
-    results: Movie[];
+    results: Movie[] | unmappedMovie[];
     total_pages: number;
 }
 
-interface Movie {
+interface unmappedMovie {
     adult: boolean;
     backdrop_path: string | null;
     genre_ids: number[];
@@ -21,4 +21,13 @@ interface Movie {
     vote_count: number;
 }
 
-export { MovieApiResponse, Movie };
+interface Movie {
+    backdrop_path: string | null;
+    id: number;
+    overview: string;
+    poster_path: string | null;
+    release_date: string;
+    title: string;
+}
+
+export { MovieApiResponse, unmappedMovie, Movie };

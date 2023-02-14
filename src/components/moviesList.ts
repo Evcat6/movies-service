@@ -1,17 +1,17 @@
 import { getPopularMovies } from '../helpers/apiHelper';
 import { createFilmCard } from './filmCard';
-import { MovieApiResponse } from '../interfaces/response.interface';
+import { Movie, MovieApiResponse } from '../interfaces/response.interface';
 
-async function moviesList() {
+async function moviesList(): Promise<void> {
     const filmsContainer = document.getElementById(
         'film-container'
     ) as HTMLElement;
     const moviesList: MovieApiResponse = await getPopularMovies();
 
-    for (const item of moviesList.results) {
-        const newMovie = createFilmCard(item);
+    moviesList.results.map((movie: Movie) => {
+        const newMovie = createFilmCard(movie);
         filmsContainer.appendChild(newMovie);
-    }
+    })
 }
 
 export { moviesList };
