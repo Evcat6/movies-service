@@ -1,16 +1,16 @@
 const presets = [
     [
-      '@babel/preset-env',
-      {
-        "targets": "defaults",
-      },
+        '@babel/preset-env',
+        {
+            targets: 'defaults',
+        },
     ],
     '@babel/preset-typescript',
-  ];
+];
 
-  const plugins = ['@babel/plugin-proposal-class-properties'];
+const plugins = ['@babel/plugin-proposal-class-properties'];
 
-  module.exports = {
+module.exports = {
     presets,
     plugins,
-  };
+};

@@ -1,3 +1,4 @@
 *.html
 *.css
 webpack.config.js
+babel.config.js
