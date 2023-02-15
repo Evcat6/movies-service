@@ -6,7 +6,7 @@ import {
     getMoviesByEnpoint,
 } from '../helpers/apiHelper';
 import { removeAllChildrens } from '../helpers/domHelper';
-import { APIEndoints } from '../enums/apiEndpoints';
+import { APIEndoints } from '../enums/apiEndpoints.enum';
 import { SearchParams } from '../interfaces/searchParams.interface';
 import { Movie } from '../interfaces/response.interface';
 import { createFilmCard } from './filmCard';

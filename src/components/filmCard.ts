@@ -8,9 +8,9 @@ import {
 import { createSvgHurt } from './hurtIcon';
 import { createCardDescriptionBody } from './cardDescription';
 import { createFavoriteMovieCard } from './favoriteFilmCard';
-import { CardColors } from '../enums/cardColors';
-import { LocalStorageKeys } from '../enums/localStorageKeys';
-import { APILinks } from '../enums/apiLinks';
+import { CardColors } from '../enums/cardColors.enum';
+import { LocalStorageKeys } from '../enums/localStorageKeys.enum';
+import { APILinks } from '../enums/apiLinks.enum';
 
 const createFilmCard = ({
     poster_path,

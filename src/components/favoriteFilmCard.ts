@@ -6,9 +6,9 @@ import {
     setItemToLocalStorage,
 } from '../services/localStorage.service';
 import { createCardDescriptionBody } from './cardDescription';
-import { CardColors } from '../enums/cardColors';
-import { LocalStorageKeys } from '../enums/localStorageKeys';
-import { APILinks } from '../enums/apiLinks';
+import { CardColors } from '../enums/cardColors.enum';
+import { LocalStorageKeys } from '../enums/localStorageKeys.enum';
+import { APILinks } from '../enums/apiLinks.enum';
 
 function createFavoriteMovieCard({
     poster_path,

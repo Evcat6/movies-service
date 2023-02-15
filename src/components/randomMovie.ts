@@ -1,6 +1,6 @@
 import { getPopularMovies } from '../helpers/apiHelper';
 import { Movie } from '../interfaces/response.interface';
-import { APILinks } from '../enums/apiLinks';
+import { APILinks } from '../enums/apiLinks.enum';
 
 async function randomMovie(): Promise<void> {
     const randomMovieContainer = document.getElementById(

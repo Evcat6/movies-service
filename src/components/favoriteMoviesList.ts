@@ -1,6 +1,6 @@
 import { getItemFromLocalStorage } from '../services/localStorage.service';
 import { createFavoriteMovieCard } from './favoriteFilmCard';
-import { LocalStorageKeys } from '../enums/localStorageKeys';
+import { LocalStorageKeys } from '../enums/localStorageKeys.enum';
 import { getMovieById } from '../helpers/apiHelper';
 
 function favoriteMoviesList(): void {

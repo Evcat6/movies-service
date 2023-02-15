@@ -1,11 +1,11 @@
-import { APIEndoints } from '../enums/apiEndpoints';
+import { APIEndoints } from '../enums/apiEndpoints.enum';
 import {
     MovieApiResponse,
     Movie,
     unmappedMovie,
 } from '../interfaces/response.interface';
-import { APILinks } from '../enums/apiLinks';
-import { APIMethods } from '../enums/apiMethods';
+import { APILinks } from '../enums/apiLinks.enum';
+import { APIMethods } from '../enums/apiMethods.enum';
 import { movieMapper, moviesMapper } from '../utils/moviesMapper';
 
 const API_KEY = '6a6891ea94e015aee4047d70ea4f4006';

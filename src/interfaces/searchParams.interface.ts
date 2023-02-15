@@ -1,4 +1,4 @@
-import { APIEndoints } from '../enums/apiEndpoints';
+import { APIEndoints } from '../enums/apiEndpoints.enum';
 
 interface SearchParams {
     currentPage: number;
