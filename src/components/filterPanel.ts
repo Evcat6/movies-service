@@ -126,7 +126,7 @@ function iterateMainPageMovies(movies: Movie[]): void {
     movies.map((movie: Movie) => {
         const newMovie = createFilmCard(movie);
         filmsContainer.appendChild(newMovie);
-    })
+    });
 }
 
 export { filterPanel };

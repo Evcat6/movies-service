@@ -11,7 +11,7 @@ async function moviesList(): Promise<void> {
     moviesList.results.map((movie: Movie) => {
         const newMovie = createFilmCard(movie);
         filmsContainer.appendChild(newMovie);
-    })
+    });
 }
 
 export { moviesList };

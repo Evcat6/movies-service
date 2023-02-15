@@ -7,8 +7,7 @@ import {
 import { APILinks } from '../enums/apiLinks.enum';
 import { APIMethods } from '../enums/apiMethods.enum';
 import { movieMapper, moviesMapper } from '../utils/moviesMapper';
-
-const API_KEY = '6a6891ea94e015aee4047d70ea4f4006';
+import { ENV } from '../enums/env.enum';
 
 const apiRequest = async (
     endpoint: string,
@@ -29,7 +28,7 @@ const apiRequest = async (
         };
         const urlQuery: URLSearchParams = new URLSearchParams({
             ...queries,
-            api_key: API_KEY as string,
+            api_key: ENV.API_KEY,
         });
         const request: Response = await fetch(
             `${APILinks.API_CONNECT_URL}${endpoint}?${urlQuery}`,
