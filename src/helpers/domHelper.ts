@@ -24,11 +24,11 @@ function removeElementByDataKey(dataKey: number): void {
     element?.remove();
 }
 
-function removeAllChildrens(element: Element) {
-    let delChild = element?.lastChild;
+function removeAllChildrens(element: Element): void {
+    let delChild = element.lastChild as ChildNode;
     while (delChild) {
         element?.removeChild(delChild);
-        delChild = element?.lastChild;
+        delChild = element.lastChild as ChildNode;
     }
 }
 
