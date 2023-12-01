@@ -1,33 +1,39 @@
-import { createElement } from '../helpers/domHelper';
+import { IComponent } from '../common/interfaces/IComponent.interface';
+import { AbstractComponent } from './abstract';
 
-function createCardDescriptionBody(title: string, date: string): HTMLElement {
-    const cardBody: HTMLElement = createElement({
-        tagName: 'div',
-        className: 'card-body',
-    });
+class CardDescriptionComponent extends AbstractComponent implements IComponent {
+  private cardBody: HTMLElement = this.createElement({
+    tagName: 'div',
+    className: 'card-body',
+  });
 
-    const cardTitle: HTMLElement = createElement({
-        tagName: 'p',
-        className: 'card-text truncate',
-    });
-    cardTitle.innerHTML = title;
+  private dateContainer: HTMLElement = this.createElement({
+    tagName: 'div',
+    className: 'd-flex justify-content-between align-items-center',
+  });
 
-    const dateContainer: HTMLElement = createElement({
-        tagName: 'div',
-        className: 'd-flex justify-content-between align-items-center',
-    });
+  private dateText: HTMLElement = this.createElement({
+    tagName: 'small',
+    className: 'text-muted',
+  });
 
-    const dateText: HTMLElement = createElement({
-        tagName: 'small',
-        className: 'text-muted',
-    });
+  private cardTitle: HTMLElement = this.createElement({
+    tagName: 'p',
+    className: 'card-text truncate',
+  });
 
-    dateText.innerHTML = date;
+  constructor(title: string, date: string) {
+    super();
+    this.dateText.innerHTML = date;
+    this.cardTitle.innerHTML = title;
+  }
 
-    cardBody.appendChild(cardTitle);
-    dateContainer.appendChild(dateText);
-    cardBody.appendChild(dateContainer);
-    return cardBody;
+  public build() {
+    this.cardBody.appendChild(this.cardTitle);
+    this.dateContainer.appendChild(this.dateText);
+    this.cardBody.appendChild(this.dateContainer);
+    return this.cardBody;
+  }
 }
 
-export { createCardDescriptionBody };
+export { CardDescriptionComponent };

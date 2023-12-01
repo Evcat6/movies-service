@@ -1,40 +1,42 @@
-import { getPopularMovies } from '../helpers/apiHelper';
-import { Movie } from '../interfaces/response.interface';
-import { APILinks } from '../enums/apiLinks.enum';
+import { ENV } from '../common/config/env.config';
+import { IRendererComponent } from '../common/interfaces/IRendererComponent.interface';
+import { moviesService } from '../services/services';
 
-async function randomMovie(): Promise<void> {
-    const randomMovieContainer = document.getElementById(
-        'random-movie'
-    ) as HTMLElement;
-    const randomMovieTitle = document.getElementById(
-        'random-movie-name'
-    ) as HTMLElement;
-    const randomMovieDescription = document.getElementById(
-        'random-movie-description'
-    ) as HTMLElement;
+class RandomMovieRenderer implements IRendererComponent {
+  private randomMovieContainer = document.getElementById(
+    'random-movie'
+  ) as HTMLElement;
+  private randomMovieTitle = document.getElementById(
+    'random-movie-name'
+  ) as HTMLElement;
+  private randomMovieDescription = document.getElementById(
+    'random-movie-description'
+  ) as HTMLElement;
 
-    const movies = await getPopularMovies();
-
-    const minRange = 0;
-    const maxRange = movies.results.length;
-    const randomMovieId = generateRandomNumber(minRange, maxRange);
-    const movieById: Movie = movies.results[randomMovieId];
-    randomMovieContainer.style.backgroundImage = `url(${APILinks.API_IMAGES_URL}/${movieById.backdrop_path})`;
-    randomMovieContainer.style.backgroundSize = 'cover';
-    randomMovieTitle.innerText = movieById.title;
-    randomMovieDescription.innerText = movieById.overview;
-}
-
-function generateRandomNumber(min = 0, max = 100): number {
+  private generateRandomNumber(min = 0, max = 100): number {
     const difference = max - min;
 
     let rand = Math.random();
 
     rand = Math.floor(rand * difference);
 
-    rand = rand + min;
+    rand += min;
 
     return rand;
+  }
+
+  public async render() {
+    const movies = await moviesService.getPopular();
+
+    const minRange = 0;
+    const maxRange = movies.results.length;
+    const randomMovieId = this.generateRandomNumber(minRange, maxRange);
+    const movieById = movies.results[randomMovieId];
+    this.randomMovieContainer.style.backgroundImage = `url(${ENV.API.IMAGES_URL}/${movieById.backdropPath})`;
+    this.randomMovieContainer.style.backgroundSize = 'cover';
+    this.randomMovieTitle.innerText = movieById.title;
+    this.randomMovieDescription.innerText = movieById.overview;
+  }
 }
 
-export { randomMovie };
+export { RandomMovieRenderer };

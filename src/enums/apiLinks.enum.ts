@@ -1,7 +1,0 @@
-enum APILinks {
-    API_CONNECT_URL = 'https://api.themoviedb.org/3',
-    API_IMAGES_URL = 'https://image.tmdb.org/t/p/original',
-    API_PHOTO_FILLER = 'https://via.placeholder.com/1000/fff/808080/?text=No%20Photo%20Found',
-}
-
-export { APILinks };

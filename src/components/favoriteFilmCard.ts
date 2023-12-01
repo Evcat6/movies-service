@@ -1,90 +1,98 @@
-import { createElement, removeElementByDataKey } from '../helpers/domHelper';
-import { Movie } from '../interfaces/response.interface';
-import { createSvgHurt } from './hurtIcon';
-import {
-    getItemFromLocalStorage,
-    setItemToLocalStorage,
-} from '../services/localStorage.service';
-import { createCardDescriptionBody } from './cardDescription';
-import { CardColors } from '../enums/cardColors.enum';
-import { LocalStorageKeys } from '../enums/localStorageKeys.enum';
-import { APILinks } from '../enums/apiLinks.enum';
+import { ENV } from '../common/config/env.config';
+import { MovieEntity } from '../common/entities/movie.entity';
+import { CardColor, StorageKey } from '../common/enums/enums';
+import { IComponent } from '../common/interfaces/IComponent.interface';
+import { storageService } from '../services/services';
+import { AbstractComponent } from './abstract';
+import { CardDescriptionComponent } from './cardDescription';
+import { SVGHurtComponent } from './hurtIcon';
 
-function createFavoriteMovieCard({
-    poster_path,
-    overview,
-    release_date,
-    id,
-}: Movie) {
-    const cardContainer: HTMLElement = createElement({
-        tagName: 'div',
-        className: 'col-12 p-2',
+class FavoriteMovieCardComponent
+  extends AbstractComponent
+  implements IComponent
+{
+  constructor(private movie: MovieEntity) {
+    super();
+  }
+
+  public build() {
+    const cardContainer: HTMLElement = this.createElement({
+      tagName: 'div',
+      className: 'col-12 p-2',
     });
-    cardContainer.setAttribute('data-key', id.toString());
+    cardContainer.setAttribute('data-key', this.movie.id.toString());
 
-    const cardShadow: HTMLElement = createElement({
-        tagName: 'div',
-        className: 'card shadow-sm',
-    });
-
-    const photoUrl = poster_path
-        ? `${APILinks.API_IMAGES_URL}/${poster_path}`
-        : APILinks.API_PHOTO_FILLER;
-
-    const elementImage: HTMLElement = createElement({
-        tagName: 'img',
-        attributes: {
-            src: photoUrl,
-        },
+    const cardShadow: HTMLElement = this.createElement({
+      tagName: 'div',
+      className: 'card shadow-sm',
     });
 
-    const moviesFromStorage: number[] = getItemFromLocalStorage(
-        LocalStorageKeys.FavoriteMovies
+    const photoUrl = this.movie.posterPath
+      ? `${ENV.API.IMAGES_URL}/${this.movie.posterPath}`
+      : ENV.API.PHOTO_FILLER;
+
+    const elementImage: HTMLElement = this.createElement({
+      tagName: 'img',
+      attributes: {
+        src: photoUrl,
+      },
+    });
+
+    const moviesFromStorage: number[] = storageService.get(
+      StorageKey.FavoriteMovies
     );
 
-    const svgHurt: SVGSVGElement = createSvgHurt(CardColors.darkRed);
+    const svgHurt: SVGSVGElement = new SVGHurtComponent(
+      CardColor.darkRed
+    ).build();
 
     const svgHurtPath = svgHurt.children[0];
-    svgHurtPath.addEventListener('click', () => svgFavoriteHurtListener(id));
+    svgHurtPath.addEventListener('click', () =>
+      this.svgFavoriteHurtListener(this.movie.id)
+    );
 
-    if (moviesFromStorage.includes(id)) {
-        svgHurt.setAttribute('fill', CardColors.lightRed);
+    if (moviesFromStorage.includes(this.movie.id)) {
+      svgHurt.setAttribute('fill', CardColor.lightRed);
     }
 
     cardShadow.appendChild(elementImage);
     cardShadow.appendChild(svgHurt);
 
-    const cardBody = createCardDescriptionBody(overview, release_date);
+    const cardBody = new CardDescriptionComponent(
+      this.movie.overview,
+      this.movie.releaseDate
+    ).build();
 
     cardShadow.appendChild(cardBody);
     cardContainer.appendChild(cardShadow);
     return cardContainer;
-}
+  }
 
-function svgFavoriteHurtListener(id: number): void {
+  private svgFavoriteHurtListener(id: number): void {
     const cardFromMainList = document.querySelector(
-        `[data-gen-key="${id}"]`
+      `[data-gen-key="${id}"]`
     ) as Element;
     if (cardFromMainList) {
-        const cardFromMainListFirstChild = cardFromMainList.children[0];
-        for (let i = 0; i < cardFromMainListFirstChild.childElementCount; i++) {
-            if (cardFromMainListFirstChild.children[i].tagName === 'svg') {
-                cardFromMainListFirstChild.children[i].setAttribute(
-                    'fill',
-                    CardColors.darkRed
-                );
-            }
+      const cardFromMainListFirstChild = cardFromMainList.children[0];
+      for (let i = 0; i < cardFromMainListFirstChild.childElementCount; i++) {
+        if (cardFromMainListFirstChild.children[i].tagName === 'svg') {
+          cardFromMainListFirstChild.children[i].setAttribute(
+            'fill',
+            CardColor.darkRed
+          );
         }
+      }
     }
 
-    let moviesFromStorage: number[] = getItemFromLocalStorage(
-        LocalStorageKeys.FavoriteMovies
+    let moviesFromStorage: number[] = storageService.get(
+      StorageKey.FavoriteMovies
     );
     moviesFromStorage = moviesFromStorage.filter(
-        (movieId: number) => movieId !== id
+      (movieId: number) => movieId !== id
     );
-    setItemToLocalStorage(LocalStorageKeys.FavoriteMovies, moviesFromStorage);
-    removeElementByDataKey(id);
+    storageService.set(StorageKey.FavoriteMovies, moviesFromStorage);
+    this.removeElementByDataKey(id);
+  }
 }
 
-export { createFavoriteMovieCard };
+export { FavoriteMovieCardComponent };

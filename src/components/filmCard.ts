@@ -1,100 +1,102 @@
-import { createElement, removeElementByDataKey } from '../helpers/domHelper';
-import { Movie } from '../interfaces/response.interface';
-import { getMovieById } from '../helpers/apiHelper';
-import {
-    setItemToLocalStorage,
-    getItemFromLocalStorage,
-} from '../services/localStorage.service';
-import { createSvgHurt } from './hurtIcon';
-import { createCardDescriptionBody } from './cardDescription';
-import { createFavoriteMovieCard } from './favoriteFilmCard';
-import { CardColors } from '../enums/cardColors.enum';
-import { LocalStorageKeys } from '../enums/localStorageKeys.enum';
-import { APILinks } from '../enums/apiLinks.enum';
+import { ENV } from '../common/config/env.config';
+import { MovieEntity } from '../common/entities/movie.entity';
+import { CardColor } from '../common/enums/cardColor.enum';
+import { StorageKey } from '../common/enums/storageKey.enum';
+import { moviesService, storageService } from '../services/services';
+import { AbstractComponent } from './abstract';
+import { CardDescriptionComponent } from './cardDescription';
+import { FavoriteMovieCardComponent } from './favoriteFilmCard';
+import { SVGHurtComponent } from './hurtIcon';
 
-const createFilmCard = ({
-    poster_path,
-    overview,
-    release_date,
-    id,
-}: Movie): HTMLElement => {
-    const cardContainer: HTMLElement = createElement({
-        tagName: 'div',
-        className: 'col-lg-3 col-md-4 col-12 p-2',
-    });
-    cardContainer.setAttribute('data-gen-key', id.toString());
+class FilmCardComponent extends AbstractComponent {
+  constructor(private movie: MovieEntity) {
+    super();
+  }
 
-    const cardShadow: HTMLElement = createElement({
-        tagName: 'div',
-        className: 'card shadow-sm',
+  public build(): HTMLElement {
+    const cardContainer: HTMLElement = this.createElement({
+      tagName: 'div',
+      className: 'col-lg-3 col-md-4 col-12 p-2',
     });
 
-    const photoUrl = poster_path
-        ? `${APILinks.API_IMAGES_URL}/${poster_path}`
-        : APILinks.API_PHOTO_FILLER;
+    cardContainer.setAttribute('data-gen-key', this.movie.id.toString());
 
-    const elementImage: HTMLElement = createElement({
-        tagName: 'img',
-        attributes: {
-            src: photoUrl,
-        },
+    const cardShadow: HTMLElement = this.createElement({
+      tagName: 'div',
+      className: 'card shadow-sm',
     });
 
-    const moviesFromStorage: number[] = getItemFromLocalStorage(
-        LocalStorageKeys.FavoriteMovies
+    const photoUrl = this.movie.posterPath
+      ? `${ENV.API.IMAGES_URL}/${this.movie.posterPath}`
+      : ENV.API.PHOTO_FILLER;
+
+    const elementImage: HTMLElement = this.createElement({
+      tagName: 'img',
+      attributes: {
+        src: photoUrl,
+      },
+    });
+
+    const moviesFromStorage: number[] = storageService.get(
+      StorageKey.FavoriteMovies
     );
 
-    const svgHurt: SVGSVGElement = createSvgHurt(CardColors.darkRed);
+    const svgHurt: SVGSVGElement = new SVGHurtComponent(
+      CardColor.darkRed
+    ).build();
 
-    if (moviesFromStorage.includes(id)) {
-        svgHurt.setAttribute('fill', CardColors.lightRed);
+    if (moviesFromStorage.includes(this.movie.id)) {
+      svgHurt.setAttribute('fill', CardColor.lightRed);
     }
 
     const svgHurtPath = svgHurt.children[0];
-    svgHurtPath.addEventListener('click', (e) => svgHurtListener(e, id));
+    svgHurtPath.addEventListener('click', (e) =>
+      this.svgHurtListener(e, this.movie.id)
+    );
 
     cardShadow.appendChild(elementImage);
     cardShadow.appendChild(svgHurt);
 
-    const cardBody = createCardDescriptionBody(overview, release_date);
+    const cardBody = new CardDescriptionComponent(
+      this.movie.overview,
+      this.movie.releaseDate
+    ).build();
 
     cardShadow.appendChild(cardBody);
     cardContainer.appendChild(cardShadow);
     return cardContainer;
-};
+  }
 
-const svgHurtListener = async (e: Event, id: number): Promise<void> => {
-    const movie = await getMovieById(id);
+  private async svgHurtListener(e: Event, id: number): Promise<void> {
+    const movie = await moviesService.getById(this.movie.id);
     if (!movie) return;
 
     const pathElement = e.target as HTMLElement;
     const svgElement = pathElement.closest('svg') as SVGSVGElement;
 
     const favoriteFilmsContainer = document.getElementById(
-        'favorite-movies'
+      'favorite-movies'
     ) as HTMLElement;
-    let moviesFromStorage: number[] = getItemFromLocalStorage(
-        LocalStorageKeys.FavoriteMovies
+    const moviesFromStorage: number[] = storageService.get(
+      StorageKey.FavoriteMovies
     );
 
     if (!moviesFromStorage.includes(id)) {
-        setItemToLocalStorage(LocalStorageKeys.FavoriteMovies, [
-            ...moviesFromStorage,
-            id,
-        ]);
-        svgElement.setAttribute('fill', CardColors.lightRed);
+      svgElement.setAttribute('fill', CardColor.lightRed);
 
-        const newFavoriteMovie = createFavoriteMovieCard(movie);
-        favoriteFilmsContainer.appendChild(newFavoriteMovie);
+      storageService.set(StorageKey.FavoriteMovies, [...moviesFromStorage, id]);
+
+      const newFavoriteMovie = new FavoriteMovieCardComponent(movie).build();
+      favoriteFilmsContainer.appendChild(newFavoriteMovie);
     } else {
-        moviesFromStorage = moviesFromStorage.filter((e: number) => e !== id);
-        setItemToLocalStorage(
-            LocalStorageKeys.FavoriteMovies,
-            moviesFromStorage
-        );
-        svgElement.setAttribute('fill', CardColors.darkRed);
-        removeElementByDataKey(id);
+      svgElement.setAttribute('fill', CardColor.darkRed);
+      const filteredMoviesFromStorage = moviesFromStorage.filter(
+        (e: number) => e !== id
+      );
+      storageService.set(StorageKey.FavoriteMovies, filteredMoviesFromStorage);
+      this.removeElementByDataKey(id);
     }
-};
+  }
+}
 
-export { createFilmCard };
+export { FilmCardComponent };

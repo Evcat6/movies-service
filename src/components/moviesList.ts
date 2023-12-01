@@ -1,17 +1,21 @@
-import { getPopularMovies } from '../helpers/apiHelper';
-import { createFilmCard } from './filmCard';
-import { Movie, MovieApiResponse } from '../interfaces/response.interface';
+import { MovieEntity } from '../common/entities/movie.entity';
+import { IRendererComponent } from '../common/interfaces/IRendererComponent.interface';
+import { moviesService } from '../services/services';
+import { FilmCardComponent } from './filmCard';
 
-async function moviesList(): Promise<void> {
-    const filmsContainer = document.getElementById(
-        'film-container'
-    ) as HTMLElement;
-    const moviesList: MovieApiResponse = await getPopularMovies();
+class MoviesListRenderer implements IRendererComponent {
+  private filmsContainer = document.getElementById(
+    'film-container'
+  ) as HTMLElement;
 
-    moviesList.results.map((movie: Movie) => {
-        const newMovie = createFilmCard(movie);
-        filmsContainer.appendChild(newMovie);
+  public async render() {
+    const moviesList = await moviesService.getPopular();
+
+    moviesList.results.map((movie: MovieEntity) => {
+      const newMovie = new FilmCardComponent(movie).build();
+      this.filmsContainer.appendChild(newMovie);
     });
+  }
 }
 
-export { moviesList };
+export { MoviesListRenderer };
