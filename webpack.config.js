@@ -1,14 +1,16 @@
 const path = require('path');
 const { DefinePlugin } = require('webpack');
-const dotenv = require('dotenv').config({
-  path: path.join(__dirname, '.env'),
-});
+const Dotenv = require('dotenv-webpack');
+const { parsed: envVars} = require('dotenv').config();
+
+console.log(envVars);
 
 module.exports = {
   plugins: [
     new DefinePlugin({
-      'process.env': JSON.stringify(dotenv.parsed),
-    }),
+      'process': JSON.stringify({}),
+      'process.env': JSON.stringify(envVars)
+    })
   ],
   entry: ['babel-polyfill', './index.ts'],
   output: {
@@ -49,12 +51,12 @@ module.exports = {
     port: 8000,
     proxy: {
       '/api/movies': {
-        target: dotenv.parsed.API_CONNECT_URL,
+        target: envVars.API_CONNECT_URL, // Ensure API_CONNECT_URL is defined
         secure: true,
         changeOrigin: true,
-        pathRewrite: {'^/api/movies': ''},
-      }
-    }
+        pathRewrite: { '^/api/movies': '' },
+      },
+    },
   },
   devtool: 'source-map',
 };
